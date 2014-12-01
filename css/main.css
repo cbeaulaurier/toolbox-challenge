@@ -1,6 +1,44 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700);
+
+body {
+    text-align: center;
+}
+
+body {
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-weight: 400;
+    color: #D9D9DA;
+    background-color: #1A237E;
+}
+
+h1 {
+    font-weight: 700;
+    font-size: 52px;
+    margin: auto;
+}
 
 #game-board img {
     width: 150px;
     height: 150px;
     margin-right: 5px;
+}
+
+.stats {
+    margin-left: 1em;
+}
+
+.stats p {
+    display: inline;
+    margin-right: 5.5em;
+}
+
+#game-board {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+button {
+    margin-bottom: 1em;
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-size: 16px;
 }
