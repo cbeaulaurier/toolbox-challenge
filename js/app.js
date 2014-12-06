@@ -3,21 +3,79 @@
 
 var firstClicked;
 var tileBack = 'img/tile-back.png';
+var tiles = [];
+var idx;
+
+var matched;
+var missed;
+var remaining = 8;
+
+var matchedStats = $('#matched');
+var missedStats = $('#missed');
+var remainingStats = $('#remaining');
 
 $(document).ready(function() {
-    var tiles = [];
-    var idx;
 
-    var matched;
-    var missed;
-    var remaining = 8;
+    createGameboard();
 
-    var matchedStats = $('#matched');
-    var missedStats = $('#missed');
-    var remainingStats = $('#remaining');
+    // on image click
+    $('#game-board img').click(function() {
+        var img = $(this);
 
+        if (!this.flipped) {
+            flipTile(img);
+        }
+        if (firstClicked) {     // if second phase of turn
+            if (firstClicked == this.tileNum)  {  // matched case
+                matched++;
+                matchedStats.innerHTML = "Matches: " + matched;
+                remaining--;
+                remainingStats.innerHTML = "Remaining: " + remaining;
+            } else {    // not matched
+                missed++;
+                missedStats.innerHTML = "Missed: " + missed;
+                window.setTimeout(function() {
+                    flipTile(img);
+                    flipTile(firstClicked);
+                }, 1000);
+                    this.flipped = !this.flipped;
+                }
+        } else {    // first phase of turn
+            this.flipped = !this.flipped;
+        }
+    }); // on click of gameboard images
+
+
+    // create timer
+    var startTime = _.now();
+    var timer = window.setInterval(function() {
+        var elapsedSeconds = Math.floor((_.now() - startTime) / 1000);
+        $('#elapsed-seconds').text("Timer: " + elapsedSeconds + "s");
+    }, 1000);
+
+    $('#new-game').click(function() {
+        $('#game-board').empty();
+        createGameboard();
+    })
+}); // jQuery ready function
+
+function flipTile(img) {
+    var tile = img.data('tile');
+    img.fadeOut(100, function() {
+        if (tile.flipped) {
+            img.attr('src', tileBack);
+            firstClicked = null;
+        } else {
+            img.attr('src', tile.src);
+            firstClicked = tile;
+        }
+        img.fadeIn(100);
+        });
+}
+
+function createGameboard() {
     // create tiles array
-    for (idx = 1; idx <= 32; ++idx) {
+    for (var idx = 1; idx <= 32; ++idx) {
         tiles.push({
             tileNum: idx,
             src: 'img/tile' + idx + '.jpg'
@@ -62,53 +120,4 @@ $(document).ready(function() {
         row.append(img);
     });
     gameBoard.append(row);
-
-    // on image click
-    $('#game-board img').click(function() {
-        var img = $(this);
-
-        if (!this.flipped) {
-            flipTile(img);
-        }
-        if (firstClicked) {     // if second phase of turn
-            if (firstClicked == this.tileNum)  {  // matched case
-                matched++;
-                matchedStats.innerHTML = "Matches: " + matched;
-                remaining--;
-                remainingStats.innerHTML = "Remaining: " + remaining;
-            } else {    // not matched
-                missed++;
-                missedStats.innerHTML = "Missed: " + missed;
-                window.setTimeout(function() {
-                    flipTile(img);
-                    flipTile(firstClicked);
-                }, 1000);
-                    this.flipped = !this.flipped;
-                }
-        } else {    // first phase of turn
-            this.flipped = !this.flipped;
-        }
-    }); // on click of gameboard images
-
-
-    // create timer
-    var startTime = _.now();
-    var timer = window.setInterval(function() {
-        var elapsedSeconds = Math.floor((_.now() - startTime) / 1000);
-        $('#elapsed-seconds').text("Timer: " + elapsedSeconds + "s");
-    }, 1000);
-}); // jQuery ready function
-
-function flipTile(img) {
-    var tile = img.data('tile');
-    img.fadeOut(100, function() {
-        if (tile.flipped) {
-            img.attr('src', tileBack);
-            firstClicked = null;
-        } else {
-            img.attr('src', tile.src);
-            firstClicked = tile;
-        }
-        img.fadeIn(100);
-        });
 }
